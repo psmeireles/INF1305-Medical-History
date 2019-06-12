@@ -28,38 +28,62 @@ import (
 type SmartContract struct {
 }
 
-/* Define Tuna structure, with 4 properties.
+/* Define structures types for user's medical record.
 Structure tags are used by encoding/json library
 */
-type Tuna struct {
-	Vessel    string `json:"vessel"`
-	Timestamp string `json:"timestamp"`
-	Location  string `json:"location"`
-	Holder    string `json:"holder"`
+type Exam struct {
+	Date        int    `json:"date"`
+	Local       int    `json:"local"`
+	Doctor_resp int    `json:"doctor_resp"` //crm do Doctor
+	Type        string `json:"type"`
+	Result      string `json:"result"` // (?) como conseguir carregar a referencia para aquivo?
+}
+
+type Recepy struct {
+	Date_signed int    `json:"date_signed"`
+	Doctor_resp int    `json:"doctor_resp"`
+	Remedy      string `json:"remedy"`
+	Notes       string `json:"notes"`
+}
+
+type VisitLog struct {
+	Date        int    `json"date"`
+	Local       string `json:"local"`
+	Reason      string `json:"reason"`
+	Notes       string `json:"notes"`
+	Doctor_resp int    `json:"doctor_resp"`
+}
+
+type Incident struct {
+	Date        int    `json"date"`
+	Local       string `json:"local"`
+	Incident    string `json:"incident"`
+	Doctor_resp int    `json:"doctor_resp"`
 }
 
 /*
- * The Init method *
- called when the Smart Contract "tuna-chaincode" is instantiated by the network
- * Best practice is to have any Ledger initialization in separate function
- -- see initLedger()
+  * The Init method *
+  called when the Smart Contract "tuna-chaincode" is instantiated by the network
+  * Best practice is to have any Ledger initialization in separate function
+  -- see initLedger()
 */
 func (s *SmartContract) Init(APIstub shim.ChaincodeStubInterface) sc.Response {
 	return shim.Success(nil)
 }
 
 /*
- * The Invoke method *
- called when an application requests to run the Smart Contract "tuna-chaincode"
- The app also specifies the specific smart contract function to call with args
+  * The Invoke method *
+  called when an application requests to run the Smart Contract "tuna-chaincode"
+  The app also specifies the specific smart contract function to call with args
 */
 func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response {
 
 	// Retrieve the requested Smart Contract function and arguments
 	function, args := APIstub.GetFunctionAndParameters()
 	// Route to the appropriate handler function to interact with the ledger
-	if function == "queryTuna" {
-		return s.queryTuna(APIstub, args)
+
+	if function == "queryExam" {
+		return s.queryExam(APIstub, args)
 	} else if function == "initLedger" {
 		return s.initLedger(APIstub)
 	} else if function == "recordTuna" {
@@ -69,13 +93,14 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	} else if function == "changeTunaHolder" {
 		return s.changeTunaHolder(APIstub, args)
 	}
+
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
 /*
- * The queryTuna method *
-Used to view the records of one particular tuna
-It takes one argument -- the key for the tuna in question
+  * The queryExam method *
+ Used to view the all exam records of one user
+ It takes one argument -- the key for the user in question
 */
 func (s *SmartContract) queryTuna(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
@@ -83,16 +108,16 @@ func (s *SmartContract) queryTuna(APIstub shim.ChaincodeStubInterface, args []st
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	tunaAsBytes, _ := APIstub.GetState(args[0])
-	if tunaAsBytes == nil {
-		return shim.Error("Could not locate tuna")
+	examAsBytes, _ := APIstub.GetState(args[0])
+	if examAsBytes == nil {
+		return shim.Error("Could not locate exams")
 	}
-	return shim.Success(tunaAsBytes)
+	return shim.Success(examAsBytes)
 }
 
 /*
- * The initLedger method *
-Will add test data (10 tuna catches)to our network
+  * The initLedger method *
+ Will add test data (10 tuna catches)to our network
 */
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
 	tuna := []Tuna{
@@ -121,9 +146,9 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 }
 
 /*
- * The recordTuna method *
-Fisherman like Sarah would use to record each of her tuna catches.
-This method takes in five arguments (attributes to be saved in the ledger).
+  * The recordTuna method *
+ Fisherman like Sarah would use to record each of her tuna catches.
+ This method takes in five arguments (attributes to be saved in the ledger).
 */
 func (s *SmartContract) recordTuna(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
@@ -143,9 +168,9 @@ func (s *SmartContract) recordTuna(APIstub shim.ChaincodeStubInterface, args []s
 }
 
 /*
- * The queryAllTuna method *
-allows for assessing all the records added to the ledger(all tuna catches)
-This method does not take any arguments. Returns JSON string containing results.
+  * The queryAllTuna method *
+ allows for assessing all the records added to the ledger(all tuna catches)
+ This method does not take any arguments. Returns JSON string containing results.
 */
 func (s *SmartContract) queryAllTuna(APIstub shim.ChaincodeStubInterface) sc.Response {
 
@@ -191,9 +216,9 @@ func (s *SmartContract) queryAllTuna(APIstub shim.ChaincodeStubInterface) sc.Res
 }
 
 /*
- * The changeTunaHolder method *
-The data in the world state can be updated with who has possession.
-This function takes in 2 arguments, tuna id and new holder name.
+  * The changeTunaHolder method *
+ The data in the world state can be updated with who has possession.
+ This function takes in 2 arguments, tuna id and new holder name.
 */
 func (s *SmartContract) changeTunaHolder(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
@@ -222,9 +247,9 @@ func (s *SmartContract) changeTunaHolder(APIstub shim.ChaincodeStubInterface, ar
 }
 
 /*
- * main function *
-calls the Start function
-The main function starts the chaincode in the container during instantiation.
+  * main function *
+ calls the Start function
+ The main function starts the chaincode in the container during instantiation.
 */
 func main() {
 

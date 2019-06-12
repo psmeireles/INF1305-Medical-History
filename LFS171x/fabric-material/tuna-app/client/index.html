@@ -57,21 +57,26 @@
           padding: 8px;
       }
       tr:nth-child(even) {
-          background-color: #dddddd;
+          background-color: #dddddd
       }
     </style>
   </head>
   <body ng-app="application" ng-controller="appController">
     <header>
-      <div id="left_header">Hyperledger Fabric Tuna Application</div>
-      <i id="right_header">Example Blockchain Application for Introduction to Hyperledger Fabric LFS171x</i>
+      <div id="left_header">Histórico Médico</div>
+      <i id="right_header">Acesse todo o seu histórico médico de maneira rápida e segura!</i>
     </header>
 
     <div id="body">
       <div class="form-group">
-        <label>Query All Tuna Catches</label>
-        <p><input id="queryAllTuna" type="submit" value="Query" class="btn btn-primary" ng-click="queryAllTuna()"></p>
-      </div>
+        <label for="user"><b>Usuario</b></label>
+        <input type="text" placeholder="username" name="user" required> 
+        <p></p>
+        <label for="senha"><b>Senha</b></label>
+        <input type="password" placeholder="senha" name="senha" required>
+
+        <p><input id="verifyLogin" type="submit" value="Login" class="btn btn-primary" ng-click="verifyLogin()"></p>
+    </div>
  
       <table id="all_tuna" class="table" align="center">
 
