@@ -12,6 +12,7 @@ app.controller('appController', function($scope, appFactory){
 	$("#error_holder").hide();
 	$("#error_query").hide();
 	
+	$scope.user_id = "";
 	$scope.queryAllTuna = function(){
 
 		appFactory.queryAllTuna(function(data){
@@ -64,6 +65,10 @@ app.controller('appController', function($scope, appFactory){
 				$("#error_holder").hide();
 			}
 		});
+	}
+
+	$scope.goToMyProfile = function(){
+		window.location.href = "./my_profile.html?id=" + $scope.user_id;
 	}
 
 });
