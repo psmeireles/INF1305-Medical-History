@@ -1,5 +1,9 @@
 {
-	"folders": [],
+	"folders": [
+		{
+			"path": "/Users/brunaparacat1/Documents/GitHub/INF1305-Medical-History/LFS171x/fabric-material"
+		}
+	],
 	"settings": {
 		"git.ignoreLimitWarning": true
 	}
