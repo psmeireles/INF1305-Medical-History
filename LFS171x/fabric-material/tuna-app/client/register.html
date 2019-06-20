@@ -70,14 +70,18 @@
     <div id="body">
         <div class="form-group">
             <label>Register new patient</label>
-            <h5 style="color:green;margin-bottom:2%" id="success_create">Success! Tx ID: {{create_tuna}}</h5>
+            <h5 style="color:green;margin-bottom:2%" id="success_create">Success! Tx ID: {{create_patient}}</h5>
             <br>
-            Name: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.name">
-            E-mail: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.email">
-            Phone number: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.phone">
+            Id: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.id">
             CPF: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.cpf">
+            Name: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.name">
+            Sex: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.sex">
+            Phone number: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.phone">
+            E-mail: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.email">
             Height: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.height">
             Weight: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.weight">
+            Age: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.age">
+            Blood type: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="patient.bloodType">
 
             <input id="createSubmit" type="submit" value="Create" class="btn btn-primary" ng-click="recordPatient()"> 
         </div>

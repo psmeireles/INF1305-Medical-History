@@ -27,20 +27,47 @@ import (
 type SmartContract struct {
 }
 
-/* Define Exame structure, with 4 properties.
-Structure tags are used by encoding/json library
-*/
-type Exame struct {
-	Paciente  string `json:"paciente"`
-	Cpf 	  string    `json:"cpf"`
-	Medico    string `json:"medico"`
-	Crm 	  string 	 `json:"crm"`
+/* Define structures
+ */
+
+type Patient struct {
+	Id        string `json:"id"`
+	CPF       string `json:"cpf"`
+	Name      string `json:"name"`
+	Sex       string `json:"sex"`
+	Phone     string `json:"phone"`
+	Email     string `json:"email"`
+	Height    string `json:"height"`
+	Weight    string `json:"weight"`
+	Age       string `json:"age"`
+	BloodType string `json:"bloodType"`
 }
-	//	Laudo     string `json:"laudo"`
+
+type Doctor struct {
+	Id    string `json:"id"`
+	CRM   string `json:"crm"`
+	CPF   string `json:"cpf"`
+	Name  string `json:"name"`
+	Phone string `json:"phone"`
+	Email string `json:"email"`
+}
+
+type Enterprise struct {
+	Id    string `json:"id"`
+	CNPJ  string `json:"cnpj"`
+	Name  string `json:"name"`
+	Phone string `json:"phone"`
+	Email string `json:"email"`
+}
+type Exam struct {
+	PatientId string `json:"patientId"`
+	DoctorId  string `json:"doctorId"`
+	ExamId    string `json:"examId"`
+}
 
 /*
  * The Init method *
- called when the Smart Contract "Exame-chaincode" is instantiated by the network
+ called when the Smart Contract "Exam-chaincode" is instantiated by the network
  * Best practice is to have any Ledger initialization in separate function
  -- see initLedger()
 */
@@ -58,25 +85,38 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	// Retrieve the requested Smart Contract function and arguments
 	function, args := APIstub.GetFunctionAndParameters()
 	// Route to the appropriate handler function to interact with the ledger
-	if function == "queryExame" {
-		return s.queryExame(APIstub, args)
-	} else if function == "initLedger" {
+	// if function == "queryExam" {
+	// 	return s.queryExam(APIstub, args)
+	// } else
+	if function == "initLedger" {
 		return s.initLedger(APIstub)
-	} else if function == "recordExame" {
-		return s.recordExame(APIstub, args)
-	} else if function == "queryAllExames" {
-		return s.queryAllExames(APIstub)
-	} else if function == "changeExameCrm" {
-		return s.changeExameCrm(APIstub, args)
+	} else if function == "recordPatient" {
+		return s.recordPatient(APIstub, args)
+	} else if function == "queryPatient" {
+		return s.queryPatient(APIstub, args)
 	}
+	//  else if function == "recordExam" {
+	// 	return s.recordExam(APIstub, args)
+	// } else if function == "queryAllExams" {
+	// 	return s.queryAllExams(APIstub)
+	// }
+	// else if function == "recordDoctor" {
+	// 	return s.recordDoctor(APIstub, args)
+	// } else if function == "queryDoctor" {
+	// 	return s.queryDoctor(APIstub, args)
+	// } else if function == "recordEnterprise" {
+	// 	return s.recordEnterprise(APIstub, args)
+	// } else if function == "queryEnterprise" {
+	// 	return s.queryEnterprise(APIstub, args)
+	// }
 
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
 /*
  * The queryExame method *
-Used to view the records of one particular Exame
-It takes one argument -- the key for the Exame in question
+Used to view the records of one particular Exam
+It takes one argument -- the key for the Exam in question
 */
 func (s *SmartContract) queryExame(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
 
@@ -84,11 +124,29 @@ func (s *SmartContract) queryExame(APIstub shim.ChaincodeStubInterface, args []s
 		return shim.Error("Incorrect number of arguments. Expecting 1")
 	}
 
-	ExameAsBytes, _ := APIstub.GetState(args[0])
-	if ExameAsBytes == nil {
+	ExamAsBytes, _ := APIstub.GetState(args[0])
+	if ExamAsBytes == nil {
 		return shim.Error("Could not locate Exame")
 	}
-	return shim.Success(ExameAsBytes)
+	return shim.Success(ExamAsBytes)
+}
+
+/*
+ * The queryPatient method *
+Used to view the records of one particular Patient
+It takes one argument -- the key for the Patient in question
+*/
+func (s *SmartContract) queryPatient(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	patientAsBytes, _ := APIstub.GetState(args[0])
+	if patientAsBytes == nil {
+		return shim.Error("Could not locate Patient")
+	}
+	return shim.Success(patientAsBytes)
 }
 
 /*
@@ -96,25 +154,30 @@ func (s *SmartContract) queryExame(APIstub shim.ChaincodeStubInterface, args []s
 Will add test data (10 Exame catches)to our network
 */
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	exames := []Exame{
-		Exame{Paciente: "923F", Cpf: "67000676", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "M83T", Cpf: "91.39594", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "T012", Cpf: "58.04891", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "P490", Cpf: "-45.0949", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "S439", Cpf: "-107.603", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "J205", Cpf: "-155.223", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "S22L", Cpf: "103.8877", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "EI89", Cpf: "-1326983", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "129R", Cpf: "153.0529", Medico: "Carlos", Crm: "541"},
-		Exame{Paciente: "49W4", Cpf: "51.95435", Medico: "Carlos", Crm: "541"},
+	// exams := []Exam{
+	// 	Exam{Paciente: "923F", Cpf: "67000676", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "M83T", Cpf: "91.39594", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "T012", Cpf: "58.04891", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "P490", Cpf: "-45.0949", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "S439", Cpf: "-107.603", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "J205", Cpf: "-155.223", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "S22L", Cpf: "103.8877", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "EI89", Cpf: "-1326983", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "129R", Cpf: "153.0529", Medico: "Carlos", Crm: "541"},
+	// 	Exam{Paciente: "49W4", Cpf: "51.95435", Medico: "Carlos", Crm: "541"},
+	// }
+
+	patients := []Patient{
+		Patient{Id: "1", CPF: "1", Name: "Pedro", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+"},
+		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+"},
 	}
 
 	i := 0
-	for i < len(exames) {
+	for i < len(patients) {
 		fmt.Println("i is ", i)
-		examesAsBytes, _ := json.Marshal(exames[i])
-		APIstub.PutState(strconv.Itoa(i+1), examesAsBytes)
-		fmt.Println("Added", exames[i])
+		patientAsBytes, _ := json.Marshal(patients[i])
+		APIstub.PutState(strconv.Itoa(i+1), patientAsBytes)
+		fmt.Println("Added", patients[i])
 		i = i + 1
 	}
 
@@ -132,12 +195,32 @@ func (s *SmartContract) recordExame(APIstub shim.ChaincodeStubInterface, args []
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 
-	var Exame = Exame{Paciente: args[1], Cpf: args[2], Medico: args[3], Crm: args[4]}
+	var Exam = Exam{ExamId: args[0], PatientId: args[1], DoctorId: args[2]}
 
-	ExameAsBytes, _ := json.Marshal(Exame)
-	err := APIstub.PutState(args[0], ExameAsBytes)
+	ExamAsBytes, _ := json.Marshal(Exam)
+	err := APIstub.PutState(args[0], ExamAsBytes)
 	if err != nil {
-		return shim.Error(fmt.Sprintf("Failed to record Exame catch: %s", args[0]))
+		return shim.Error(fmt.Sprintf("Failed to record Exam: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The recordPatient method *
+ */
+func (s *SmartContract) recordPatient(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 10 {
+		return shim.Error("Incorrect number of arguments. Expecting 10")
+	}
+
+	var Patient = Patient{Id: args[0], CPF: args[1], Name: args[2], Sex: args[3], Phone: args[4], Email: args[5], Height: args[6], Weight: args[7], Age: args[8], BloodType: args[9]}
+
+	patientAsBytes, _ := json.Marshal(Patient)
+	err := APIstub.PutState(args[0], patientAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to record patient: %s", args[0]))
 	}
 
 	return shim.Success(nil)
@@ -197,27 +280,6 @@ The data in the world state can be updated with who has possession.
 This function takes in 2 arguments, Exame id and new Crm name.
 */
 func (s *SmartContract) changeExameCrm(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
-
-	if len(args) != 2 {
-		return shim.Error("Incorrect number of arguments. Expecting 2")
-	}
-
-	ExameAsBytes, _ := APIstub.GetState(args[0])
-	if ExameAsBytes == nil {
-		return shim.Error("Could not locate Exame")
-	}
-	Exame := Exame{}
-
-	json.Unmarshal(ExameAsBytes, &Exame)
-	// Normally check that the specified argument is a valid Crm of Exame
-	// we are skipping this check for this example
-	Exame.Crm = args[1]
-
-	ExameAsBytes, _ = json.Marshal(Exame)
-	err := APIstub.PutState(args[0], ExameAsBytes)
-	if err != nil {
-		return shim.Error(fmt.Sprintf("Failed to change Exame Crm: %s", args[0]))
-	}
 
 	return shim.Success(nil)
 }

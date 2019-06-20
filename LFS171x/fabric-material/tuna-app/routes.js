@@ -4,11 +4,11 @@ var exames = require('./controller.js');
 
 module.exports = function(app){
 
-  app.get('/get_tuna/:id', function(req, res){
-    exames.get_tuna(req, res);
+  app.get('/get_patient/:id', function(req, res){
+    exames.get_patient(req, res);
   });
-  app.get('/add_tuna/:tuna', function(req, res){
-    exames.add_tuna(req, res);
+  app.get('/add_patient/:patient', function(req, res){
+    exames.add_patient(req, res);
   });
   app.get('/get_all_exames', function(req, res){
     exames.get_all_exames(req, res);

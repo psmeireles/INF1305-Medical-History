@@ -71,6 +71,30 @@ app.controller('appController', function($scope, appFactory){
 		window.location.href = "./my_profile.html?id=" + $scope.user_id;
 	}
 
+	$scope.queryPatient = function(){
+
+		var id = $scope.patient_id;
+
+		appFactory.queryPatient(id, function(data){
+			$scope.query_patient = data;
+			debugger
+			if ($scope.query_patient == "Could not locate patient"){
+				console.log()
+				$("#error_query").show();
+			} else{
+				$("#error_query").hide();
+			}
+		});
+	}
+
+	$scope.recordPatient = function(){
+
+		appFactory.recordPatient($scope.patient, function(data){
+			$scope.create_patient = data;
+			$("#success_create").show();
+		});
+	}
+
 });
 
 // Angular Factory
@@ -107,6 +131,24 @@ app.factory('appFactory', function($http){
 		var holder = data.id + "-" + data.name;
 
     	$http.get('/change_holder/'+holder).success(function(output){
+			callback(output)
+		});
+	}
+
+	factory.queryPatient = function(id, callback){
+    	$http.get('/get_patient/'+id).success(function(output){
+			callback(output)
+		});
+	}
+
+	factory.recordPatient = function(data, callback){
+
+		data.location = data.longitude + ", "+ data.latitude;
+
+		var patient = data.id + "-" + data.cpf + "-" + data.name + "-" + data.sex + "-" + data.phone 
+		+ "-" + data.email + "-" + data.height + "-" + data.weight + "-" + data.age + "-" + data.bloodType;
+
+    	$http.get('/add_patient/'+patient).success(function(output){
 			callback(output)
 		});
 	}
