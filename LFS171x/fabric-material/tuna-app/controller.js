@@ -19,8 +19,8 @@ var os            = require('os');
 
 module.exports = (function() {
 return{
-	get_all_tuna: function(req, res){
-		console.log("getting all tuna from database: ");
+	get_all_exames: function(req, res){
+		console.log("getting all exames from database: ");
 
 		var fabric_client = new Fabric_Client();
 
@@ -61,7 +61,7 @@ return{
 		    const request = {
 		        chaincodeId: 'tuna-app',
 		        txId: tx_id,
-		        fcn: 'queryAllTuna',
+		        fcn: 'queryAllExames',
 		        args: ['']
 		    };
 
