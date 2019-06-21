@@ -106,6 +106,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryDoctor(APIstub, args)
 	} else if function == "addDoctorToPatient" {
 		return s.addDoctorToPatient(APIstub, args)
+	} else if function == "removeDoctorFromPatient" {
+		return s.removeDoctorFromPatient(APIstub, args)
 	}
 	//  else if function == "recordExam" {
 	// 	return s.recordExam(APIstub, args)
@@ -360,13 +362,88 @@ func (s *SmartContract) addDoctorToPatient(APIstub shim.ChaincodeStubInterface, 
 	patient := Patient{}
 
 	json.Unmarshal(patientAsBytes, &patient)
+
+	doctorAsBytes, _ := APIstub.GetState(args[1])
+	if doctorAsBytes == nil {
+		return shim.Error("Could not locate doctor")
+	}
+	doctor := Doctor{}
+
+	json.Unmarshal(doctorAsBytes, &doctor)
+
 	// Normally check that the specified argument is a valid holder of tuna
 	// we are skipping this check for this example
 	patient.Doctors = append(patient.Doctors, args[1])
+	doctor.Patients = append(doctor.Patients, args[0])
+
 	patientAsBytes, _ = json.Marshal(patient)
 	err := APIstub.PutState(args[0], patientAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to add doctor to patient: %s", args[0]))
+	}
+
+	doctorAsBytes, _ = json.Marshal(doctor)
+	err = APIstub.PutState(args[1], doctorAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to add patient to doctor: %s", args[1]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The removeDoctorFromPatient method *
+ */
+func (s *SmartContract) removeDoctorFromPatient(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	patientAsBytes, _ := APIstub.GetState(args[0])
+	if patientAsBytes == nil {
+		return shim.Error("Could not locate patient")
+	}
+	patient := Patient{}
+
+	json.Unmarshal(patientAsBytes, &patient)
+
+	doctorAsBytes, _ := APIstub.GetState(args[1])
+	if doctorAsBytes == nil {
+		return shim.Error("Could not locate doctor")
+	}
+	doctor := Doctor{}
+
+	json.Unmarshal(doctorAsBytes, &doctor)
+	// Normally check that the specified argument is a valid holder of tuna
+	// we are skipping this check for this example
+
+	doctors := []string{}
+	for i := 0; i < len(patient.Doctors); i++ {
+		if patient.Doctors[i] != args[1] {
+			doctors = append(doctors, patient.Doctors[i])
+		}
+	}
+	patient.Doctors = doctors
+
+	patients := []string{}
+	for i := 0; i < len(doctor.Patients); i++ {
+		if doctor.Patients[i] != args[0] {
+			patients = append(patients, doctor.Patients[i])
+		}
+	}
+	doctor.Patients = patients
+
+	patientAsBytes, _ = json.Marshal(patient)
+	err := APIstub.PutState(args[0], patientAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to remove doctor from patient: %s", args[0]))
+	}
+
+	doctorAsBytes, _ = json.Marshal(doctor)
+	err = APIstub.PutState(args[1], doctorAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to remove patient from doctor: %s", args[1]))
 	}
 
 	return shim.Success(nil)

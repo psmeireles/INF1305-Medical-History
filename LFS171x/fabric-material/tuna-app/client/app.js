@@ -68,8 +68,6 @@ app.controller('appController', function($scope, appFactory){
 	}
 
 	$scope.addDoctorToPatient = function(){
-
-		debugger
 		var doctor = {}
 		doctor.doctorId = $scope.doctorToAdd
 		doctor.patientId = $scope.user.id
@@ -162,8 +160,23 @@ app.controller('appController', function($scope, appFactory){
 				})
 			}
 		});
+	}
 
-		
+	$scope.revokeDoctorAccess = function(patientId, doctorId){
+		var doctor = {}
+		doctor.doctorId = doctorId
+		doctor.patientId = patientId
+
+		appFactory.removeDoctorFromPatient(doctor, function(data){
+			$scope.doctor_removed = data;
+			if ($scope.doctor_added == "Error: no patient found"){
+				$("#error_holder").show();
+				$("#success_holder").hide();
+			} else{
+				$("#success_holder").show();
+				$("#error_holder").hide();
+			}
+		});
 	}
 });
 
@@ -210,6 +223,15 @@ app.factory('appFactory', function($http){
 		var doctor = data.patientId + "-" + data.doctorId;
 
     	$http.get('/add_doctor_to_patient/'+doctor).success(function(output){
+			callback(output)
+		});
+	}
+
+	factory.removeDoctorFromPatient = function(data, callback){
+
+		var doctor = data.patientId + "-" + data.doctorId;
+
+    	$http.get('/remove_doctor_from_patient/'+doctor).success(function(output){
 			callback(output)
 		});
 	}

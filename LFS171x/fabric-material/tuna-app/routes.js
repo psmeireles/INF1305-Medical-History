@@ -25,4 +25,7 @@ module.exports = function(app){
   app.get('/add_doctor_to_patient/:doctor', function(req, res){
     exames.add_doctor_to_patient(req, res);
   });
+  app.get('/remove_doctor_from_patient/:doctor', function(req, res){
+    exames.remove_doctor_from_patient(req, res);
+  });
 }

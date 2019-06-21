@@ -139,7 +139,7 @@
           <td>{{doctor.crm}}</td>
           <td>{{doctor.phone}}</td>
           <td>{{doctor.email}}</td>
-          <td><input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="revokeAccess(doctor)"></td>
+          <td><input id="querySubmit" type="submit" value="Remove" class="btn btn-primary" ng-click="revokeDoctorAccess(user.id, doctor.id)"></td>
         </tr>
       </table>
 
