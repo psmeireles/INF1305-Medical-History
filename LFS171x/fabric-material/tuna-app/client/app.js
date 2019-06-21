@@ -77,7 +77,6 @@ app.controller('appController', function($scope, appFactory){
 
 		appFactory.queryPatient(id, function(data){
 			$scope.query_patient = data;
-			debugger
 			if ($scope.query_patient == "Could not locate patient"){
 				console.log()
 				$("#error_query").show();
@@ -95,6 +94,41 @@ app.controller('appController', function($scope, appFactory){
 		});
 	}
 
+	$scope.queryDoctor = function(){
+
+		var id = $scope.doctor_id;
+
+		appFactory.queryDoctor(id, function(data){
+			$scope.query_doctor = data;
+			if ($scope.query_doctor == "Could not locate doctor"){
+				console.log()
+				$("#error_query").show();
+			} else{
+				$("#error_query").hide();
+			}
+		});
+	}
+
+	$scope.recordDoctor = function(){
+		debugger
+		appFactory.recordDoctor($scope.doctor, function(data){
+			$scope.create_doctor = data;
+			$("#success_create").show();
+		});
+	}
+
+	$scope.getUserData = function(){
+		var id = window.location.href.split('=')[1]
+		appFactory.queryPatient(id, function(data){
+			$scope.user = data;
+			if ($scope.user == "Could not locate patient"){
+				console.log()
+				$("#error_query").show();
+			} else{
+				$("#error_query").hide();
+			}
+		});
+	}
 });
 
 // Angular Factory
@@ -143,12 +177,25 @@ app.factory('appFactory', function($http){
 
 	factory.recordPatient = function(data, callback){
 
-		data.location = data.longitude + ", "+ data.latitude;
-
 		var patient = data.id + "-" + data.cpf + "-" + data.name + "-" + data.sex + "-" + data.phone 
 		+ "-" + data.email + "-" + data.height + "-" + data.weight + "-" + data.age + "-" + data.bloodType;
 
     	$http.get('/add_patient/'+patient).success(function(output){
+			callback(output)
+		});
+	}
+
+	factory.queryDoctor = function(id, callback){
+    	$http.get('/get_doctor/'+id).success(function(output){
+			callback(output)
+		});
+	}
+
+	factory.recordDoctor = function(data, callback){
+
+		var doctor = data.id + "-" + data.crm + "-" + data.cpf + "-" + data.name + "-" + data.phone + "-" + data.email
+
+    	$http.get('/add_doctor/'+doctor).success(function(output){
 			callback(output)
 		});
 	}

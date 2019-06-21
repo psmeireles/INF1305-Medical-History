@@ -10,6 +10,12 @@ module.exports = function(app){
   app.get('/add_patient/:patient', function(req, res){
     exames.add_patient(req, res);
   });
+  app.get('/get_doctor/:id', function(req, res){
+    exames.get_doctor(req, res);
+  });
+  app.get('/add_doctor/:doctor', function(req, res){
+    exames.add_doctor(req, res);
+  });
   app.get('/get_all_exames', function(req, res){
     exames.get_all_exames(req, res);
   });

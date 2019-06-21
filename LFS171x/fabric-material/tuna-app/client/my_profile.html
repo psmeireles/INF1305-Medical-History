@@ -98,7 +98,7 @@
       }
     </style>
   </head>
-  <body ng-app="application" ng-controller="appController">
+  <body ng-app="application" ng-controller="appController" ng-init="getUserData()">
     <header>
       <div id="left_header">Hyperledger Fabric Tuna Application</div>
       <i id="right_header">Example Blockchain Application for Introduction to Hyperledger Fabric LFS171x</i>
@@ -111,8 +111,10 @@
       <div class="card">
         <img src="http://chittagongit.com/images/google-user-icon/google-user-icon-7.jpg" alt="John" style="width:100%">
         <h1>{{user.name}}</h1>
+        <p>Sex: {{user.sex}}</p>
         <p>Height: {{user.height}} cm</p>
         <p>Weight: {{user.weight}} kg</p>
+        <p>Blood type: {{user.bloodType}}</p>
         <p><button>{{user.email}}<br>{{user.phone}}</button></p>
       </div>
 

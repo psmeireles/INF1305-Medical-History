@@ -94,17 +94,17 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.recordPatient(APIstub, args)
 	} else if function == "queryPatient" {
 		return s.queryPatient(APIstub, args)
+	} else if function == "recordDoctor" {
+		return s.recordDoctor(APIstub, args)
+	} else if function == "queryDoctor" {
+		return s.queryDoctor(APIstub, args)
 	}
 	//  else if function == "recordExam" {
 	// 	return s.recordExam(APIstub, args)
 	// } else if function == "queryAllExams" {
 	// 	return s.queryAllExams(APIstub)
 	// }
-	// else if function == "recordDoctor" {
-	// 	return s.recordDoctor(APIstub, args)
-	// } else if function == "queryDoctor" {
-	// 	return s.queryDoctor(APIstub, args)
-	// } else if function == "recordEnterprise" {
+	//  else if function == "recordEnterprise" {
 	// 	return s.recordEnterprise(APIstub, args)
 	// } else if function == "queryEnterprise" {
 	// 	return s.queryEnterprise(APIstub, args)
@@ -150,6 +150,24 @@ func (s *SmartContract) queryPatient(APIstub shim.ChaincodeStubInterface, args [
 }
 
 /*
+ * The queryDoctor method *
+Used to view the records of one particular Doctor
+It takes one argument -- the key for the Patient in question
+*/
+func (s *SmartContract) queryDoctor(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	doctorAsBytes, _ := APIstub.GetState(args[0])
+	if doctorAsBytes == nil {
+		return shim.Error("Could not locate Doctor")
+	}
+	return shim.Success(doctorAsBytes)
+}
+
+/*
  * The initLedger method *
 Will add test data (10 Exame catches)to our network
 */
@@ -172,12 +190,26 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+"},
 	}
 
+	doctors := []Doctor{
+		Doctor{Id: "82029156787", CRM: "512974", CPF: "82029156787", Name: "Carla", Phone: "21999839210", Email: "carla.sousa@uol.com.br"},
+		Doctor{Id: "82029156788", CRM: "512975", CPF: "82029156788", Name: "Claudio", Phone: "21999839210", Email: "carla.sousa@uol.com.br"},
+	}
+
 	i := 0
 	for i < len(patients) {
 		fmt.Println("i is ", i)
 		patientAsBytes, _ := json.Marshal(patients[i])
 		APIstub.PutState(strconv.Itoa(i+1), patientAsBytes)
 		fmt.Println("Added", patients[i])
+		i = i + 1
+	}
+
+	i = 0
+	for i < len(doctors) {
+		fmt.Println("i is ", i)
+		doctorAsBytes, _ := json.Marshal(doctors[i])
+		APIstub.PutState(strconv.Itoa(i+1), doctorAsBytes)
+		fmt.Println("Added", doctors[i])
 		i = i + 1
 	}
 
@@ -221,6 +253,26 @@ func (s *SmartContract) recordPatient(APIstub shim.ChaincodeStubInterface, args 
 	err := APIstub.PutState(args[0], patientAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to record patient: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The recordDoctor method *
+ */
+func (s *SmartContract) recordDoctor(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 6 {
+		return shim.Error("Incorrect number of arguments. Expecting 6")
+	}
+
+	var Doctor = Doctor{Id: args[0], CRM: args[1], CPF: args[2], Name: args[3], Phone: args[4], Email: args[5]}
+
+	doctorAsBytes, _ := json.Marshal(Doctor)
+	err := APIstub.PutState(args[0], doctorAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to record doctor: %s", args[0]))
 	}
 
 	return shim.Success(nil)
