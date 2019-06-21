@@ -22,4 +22,7 @@ module.exports = function(app){
   app.get('/change_holder/:holder', function(req, res){
     exames.change_holder(req, res);
   });
+  app.get('/add_doctor_to_patient/:doctor', function(req, res){
+    exames.add_doctor_to_patient(req, res);
+  });
 }

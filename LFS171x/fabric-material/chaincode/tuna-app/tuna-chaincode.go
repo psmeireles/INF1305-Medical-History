@@ -17,7 +17,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
-	"strconv"
 
 	"github.com/hyperledger/fabric/core/chaincode/shim"
 	sc "github.com/hyperledger/fabric/protos/peer"
@@ -31,33 +30,40 @@ type SmartContract struct {
  */
 
 type Patient struct {
-	Id        string `json:"id"`
-	CPF       string `json:"cpf"`
-	Name      string `json:"name"`
-	Sex       string `json:"sex"`
-	Phone     string `json:"phone"`
-	Email     string `json:"email"`
-	Height    string `json:"height"`
-	Weight    string `json:"weight"`
-	Age       string `json:"age"`
-	BloodType string `json:"bloodType"`
+	Id        string   `json:"id"`
+	CPF       string   `json:"cpf"`
+	Name      string   `json:"name"`
+	Sex       string   `json:"sex"`
+	Phone     string   `json:"phone"`
+	Email     string   `json:"email"`
+	Height    string   `json:"height"`
+	Weight    string   `json:"weight"`
+	Age       string   `json:"age"`
+	BloodType string   `json:"bloodType"`
+	Doctors   []string `json:"doctors"`
+	Exams     []string `json:"exams"`
 }
 
 type Doctor struct {
-	Id    string `json:"id"`
-	CRM   string `json:"crm"`
-	CPF   string `json:"cpf"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-	Email string `json:"email"`
+	Id       string   `json:"id"`
+	CRM      string   `json:"crm"`
+	CPF      string   `json:"cpf"`
+	Name     string   `json:"name"`
+	Phone    string   `json:"phone"`
+	Email    string   `json:"email"`
+	Patients []string `json:"patients"`
+	Exams    []string `json:"exams"`
 }
 
 type Enterprise struct {
-	Id    string `json:"id"`
-	CNPJ  string `json:"cnpj"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-	Email string `json:"email"`
+	Id       string   `json:"id"`
+	CNPJ     string   `json:"cnpj"`
+	Name     string   `json:"name"`
+	Phone    string   `json:"phone"`
+	Email    string   `json:"email"`
+	Patients []string `json:"patients"`
+	Doctors  []string `json:"doctors"`
+	Exams    []string `json:"exams"`
 }
 type Exam struct {
 	PatientId string `json:"patientId"`
@@ -98,6 +104,8 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.recordDoctor(APIstub, args)
 	} else if function == "queryDoctor" {
 		return s.queryDoctor(APIstub, args)
+	} else if function == "addDoctorToPatient" {
+		return s.addDoctorToPatient(APIstub, args)
 	}
 	//  else if function == "recordExam" {
 	// 	return s.recordExam(APIstub, args)
@@ -186,20 +194,20 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	// }
 
 	patients := []Patient{
-		Patient{Id: "1", CPF: "1", Name: "Pedro", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+"},
-		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+"},
+		Patient{Id: "1", CPF: "1", Name: "Pedro", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}},
+		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}},
 	}
 
 	doctors := []Doctor{
-		Doctor{Id: "82029156787", CRM: "512974", CPF: "82029156787", Name: "Carla", Phone: "21999839210", Email: "carla.sousa@uol.com.br"},
-		Doctor{Id: "82029156788", CRM: "512975", CPF: "82029156788", Name: "Claudio", Phone: "21999839210", Email: "carla.sousa@uol.com.br"},
+		Doctor{Id: "82029156787", CRM: "512974", CPF: "82029156787", Name: "Carla", Phone: "21999839210", Email: "carla.sousa@uol.com.br", Patients: []string{}, Exams: []string{}},
+		Doctor{Id: "82029156788", CRM: "512975", CPF: "82029156788", Name: "Claudio", Phone: "21999839210", Email: "carla.sousa@uol.com.br", Patients: []string{}, Exams: []string{}},
 	}
 
 	i := 0
 	for i < len(patients) {
 		fmt.Println("i is ", i)
 		patientAsBytes, _ := json.Marshal(patients[i])
-		APIstub.PutState(strconv.Itoa(i+1), patientAsBytes)
+		APIstub.PutState(patients[i].Id, patientAsBytes)
 		fmt.Println("Added", patients[i])
 		i = i + 1
 	}
@@ -208,7 +216,7 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	for i < len(doctors) {
 		fmt.Println("i is ", i)
 		doctorAsBytes, _ := json.Marshal(doctors[i])
-		APIstub.PutState(strconv.Itoa(i+1), doctorAsBytes)
+		APIstub.PutState(doctors[i].Id, doctorAsBytes)
 		fmt.Println("Added", doctors[i])
 		i = i + 1
 	}
@@ -247,7 +255,7 @@ func (s *SmartContract) recordPatient(APIstub shim.ChaincodeStubInterface, args 
 		return shim.Error("Incorrect number of arguments. Expecting 10")
 	}
 
-	var Patient = Patient{Id: args[0], CPF: args[1], Name: args[2], Sex: args[3], Phone: args[4], Email: args[5], Height: args[6], Weight: args[7], Age: args[8], BloodType: args[9]}
+	var Patient = Patient{Id: args[0], CPF: args[1], Name: args[2], Sex: args[3], Phone: args[4], Email: args[5], Height: args[6], Weight: args[7], Age: args[8], BloodType: args[9], Doctors: []string{}, Exams: []string{}}
 
 	patientAsBytes, _ := json.Marshal(Patient)
 	err := APIstub.PutState(args[0], patientAsBytes)
@@ -267,7 +275,7 @@ func (s *SmartContract) recordDoctor(APIstub shim.ChaincodeStubInterface, args [
 		return shim.Error("Incorrect number of arguments. Expecting 6")
 	}
 
-	var Doctor = Doctor{Id: args[0], CRM: args[1], CPF: args[2], Name: args[3], Phone: args[4], Email: args[5]}
+	var Doctor = Doctor{Id: args[0], CRM: args[1], CPF: args[2], Name: args[3], Phone: args[4], Email: args[5], Patients: []string{}, Exams: []string{}}
 
 	doctorAsBytes, _ := json.Marshal(Doctor)
 	err := APIstub.PutState(args[0], doctorAsBytes)
@@ -332,6 +340,34 @@ The data in the world state can be updated with who has possession.
 This function takes in 2 arguments, Exame id and new Crm name.
 */
 func (s *SmartContract) changeExameCrm(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	return shim.Success(nil)
+}
+
+/*
+ * The addDoctorToPatient method *
+ */
+func (s *SmartContract) addDoctorToPatient(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	patientAsBytes, _ := APIstub.GetState(args[0])
+	if patientAsBytes == nil {
+		return shim.Error("Could not locate patient")
+	}
+	patient := Patient{}
+
+	json.Unmarshal(patientAsBytes, &patient)
+	// Normally check that the specified argument is a valid holder of tuna
+	// we are skipping this check for this example
+	patient.Doctors = append(patient.Doctors, args[1])
+	patientAsBytes, _ = json.Marshal(patient)
+	err := APIstub.PutState(args[0], patientAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to add doctor to patient: %s", args[0]))
+	}
 
 	return shim.Success(nil)
 }

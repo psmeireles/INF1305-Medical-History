@@ -121,20 +121,24 @@
       <label>Who has access to your profile</label><br>
       Doctors:
 
+      <input id="querySubmit" type="submit" value="Add Doctor" class="btn btn-primary" ng-click="addDoctorToPatient()"> <input id="createName" class="form-control" type="text" placeholder="Insert Doctor CPF" ng-model="doctorToAdd">
+
       <table id="user_doctors" class="table" align="center">
         <tr>
           <th>Name</th>
+          <th>CPF</th>
           <th>CRM</th>
           <th>Phone <br></th>
           <th>E-mail</th>
           <th>Revoke access?</th>
         </tr>
 
-        <tr ng-repeat="doctor in user_doctors">
+        <tr ng-repeat="doctor in user.doctors">
           <td>{{doctor.name}}</td>
-          <td>{{doctor.CRM}}</td>
-          <td>{{doctor.Phone}}</td>
-          <td>{{doctor.E-mail}}</td>
+          <td>{{doctor.cpf}}</td>
+          <td>{{doctor.crm}}</td>
+          <td>{{doctor.phone}}</td>
+          <td>{{doctor.email}}</td>
           <td><input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="revokeAccess(doctor)"></td>
         </tr>
       </table>
@@ -150,11 +154,11 @@
           <th>Revoke access?</th>
         </tr>
 
-        <tr ng-repeat="enterprise in user_enterprises">
+        <tr ng-repeat="enterprise in user.enterprises">
           <td>{{enterprise.name}}</td>
-          <td>{{enterprise.CNPJ}}</td>
-          <td>{{enterprise.Phone}}</td>
-          <td>{{enterprise.E-mail}}</td>
+          <td>{{enterprise.cnpj}}</td>
+          <td>{{enterprise.phone}}</td>
+          <td>{{enterprise.email}}</td>
           <td><input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="revokeAccess(enterprise)"></td>
         </tr>
       </table>

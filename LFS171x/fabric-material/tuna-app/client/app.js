@@ -67,6 +67,26 @@ app.controller('appController', function($scope, appFactory){
 		});
 	}
 
+	$scope.addDoctorToPatient = function(){
+
+		debugger
+		var doctor = {}
+		doctor.doctorId = $scope.doctorToAdd
+		doctor.patientId = $scope.user.id
+
+		appFactory.addDoctorToPatient(doctor, function(data){
+			$scope.doctor_added = data;
+			if ($scope.doctor_added == "Error: no patient found"){
+				$("#error_holder").show();
+				$("#success_holder").hide();
+			} else{
+				$("#success_holder").show();
+				$("#error_holder").hide();
+			}
+		});
+
+	}
+
 	$scope.goToMyProfile = function(){
 		window.location.href = "./my_profile.html?id=" + $scope.user_id;
 	}
@@ -127,7 +147,23 @@ app.controller('appController', function($scope, appFactory){
 			} else{
 				$("#error_query").hide();
 			}
+
+			var doctors = $scope.user.doctors
+			$scope.user.doctors = []
+			for(var i = 0; i < doctors.length; i++){
+				appFactory.queryDoctor(doctors[i], function(data){
+					$scope.user.doctors.push(data)
+					if ($scope.user == "Could not locate doctor"){
+						console.log()
+						$("#error_query").show();
+					} else{
+						$("#error_query").hide();
+					}
+				})
+			}
 		});
+
+		
 	}
 });
 
@@ -165,6 +201,15 @@ app.factory('appFactory', function($http){
 		var holder = data.id + "-" + data.name;
 
     	$http.get('/change_holder/'+holder).success(function(output){
+			callback(output)
+		});
+	}
+
+	factory.addDoctorToPatient = function(data, callback){
+
+		var doctor = data.patientId + "-" + data.doctorId;
+
+    	$http.get('/add_doctor_to_patient/'+doctor).success(function(output){
 			callback(output)
 		});
 	}
