@@ -68,6 +68,7 @@
     </header>
 
     <div id="body">
+<<<<<<< Updated upstream
       <div class="form-group">
         <label for="user"><b>Usuario</b></label>
         <input type="text" placeholder="username" name="user" required> 
@@ -104,24 +105,17 @@
         Enter a catch number: <input id="createName" class="form-control" type="text" placeholder="Ex: 3" ng-model="tuna_id">
         <input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="queryTuna()">
       </div>
+=======
+>>>>>>> Stashed changes
 
-      <table id="query_tuna" class="table" align="center">
+        <input id="createName" class="form-control" type="text" placeholder="Insert your User ID" ng-model="user_id">
+      <input id="querySubmit" type="submit" value="Log in" class="btn btn-primary" ng-click="goToMyProfile()"> 
+      
+      <a href="./queryall.html" class="btn btn-primary">Query all tuna</a> <br>
+     
+      <input id="querySubmit" type="submit" value="Query Patient" class="btn btn-primary" ng-click="queryPatient()">
 
-        <tr>
-          <th>Timestamp</th>
-          <th>Holder</th>
-          <th>Catch Location <br>(Longitude, Latitude)</th>
-          <th>Vessel</th>
-        </tr>
-
-        <tr>
-          <td>{{query_tuna.timestamp}}</td>
-          <td>{{query_tuna.holder}}</td>
-          <td>{{query_tuna.location}}</td>
-          <td>{{query_tuna.vessel}}</td>
-        </tr>
-      </table>
-
+<<<<<<< Updated upstream
       <div class="form-group">
         <label>Create Tuna Record</label>
         <h5 style="color:green;margin-bottom:2%" id="success_create">Success! Tx ID: {{create_tuna}}</h5>
@@ -143,6 +137,10 @@
         Enter name of new holder: <input class="form-control" name="assetSelect" placeholder="Ex: Barry" ng-model="holder.name">
         <input id="transferSubmit" type="submit" value="Change" class="btn btn-primary" ng-click="changeHolder()">
       </div>
+=======
+      <a href="./register.html" class="btn btn-primary">Register</a> <br>
+      <input id="createName" class="form-control" type="text" placeholder="Insert your User ID" ng-model="patient_id">
+>>>>>>> Stashed changes
 
     </div>
   </body>

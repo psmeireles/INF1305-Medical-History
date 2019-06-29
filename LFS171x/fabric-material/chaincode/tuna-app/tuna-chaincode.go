@@ -28,6 +28,7 @@ import (
 type SmartContract struct {
 }
 
+<<<<<<< Updated upstream
 /* Define Tuna structure, with 4 properties.
 Structure tags are used by encoding/json library
 */
@@ -36,6 +37,52 @@ type Tuna struct {
 	Timestamp string `json:"timestamp"`
 	Location  string `json:"location"`
 	Holder    string `json:"holder"`
+=======
+/* Define structures
+ */
+
+type Patient struct {
+	Id          string   `json:"id"`
+	CPF         string   `json:"cpf"`
+	Name        string   `json:"name"`
+	Sex         string   `json:"sex"`
+	Phone       string   `json:"phone"`
+	Email       string   `json:"email"`
+	Height      string   `json:"height"`
+	Weight      string   `json:"weight"`
+	Age         string   `json:"age"`
+	BloodType   string   `json:"bloodType"`
+	Doctors     []string `json:"doctors"`
+	Exams       []string `json:"exams"`
+	Enterprises []string `json:"enterprises"`
+}
+
+type Doctor struct {
+	Id       string   `json:"id"`
+	CRM      string   `json:"crm"`
+	CPF      string   `json:"cpf"`
+	Name     string   `json:"name"`
+	Phone    string   `json:"phone"`
+	Email    string   `json:"email"`
+	Patients []string `json:"patients"`
+	Exams    []string `json:"exams"`
+}
+
+type Enterprise struct {
+	Id       string   `json:"id"`
+	CNPJ     string   `json:"cnpj"`
+	Name     string   `json:"name"`
+	Phone    string   `json:"phone"`
+	Email    string   `json:"email"`
+	Patients []string `json:"patients"`
+	Doctors  []string `json:"doctors"`
+	Exams    []string `json:"exams"`
+}
+type Exam struct {
+	PatientId string `json:"patientId"`
+	DoctorId  string `json:"doctorId"`
+	ExamId    string `json:"examId"`
+>>>>>>> Stashed changes
 }
 
 /*
@@ -62,6 +109,7 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryTuna(APIstub, args)
 	} else if function == "initLedger" {
 		return s.initLedger(APIstub)
+<<<<<<< Updated upstream
 	} else if function == "recordTuna" {
 		return s.recordTuna(APIstub, args)
 	} else if function == "queryAllTuna" {
@@ -69,6 +117,33 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 	} else if function == "changeTunaHolder" {
 		return s.changeTunaHolder(APIstub, args)
 	}
+=======
+	} else if function == "recordPatient" {
+		return s.recordPatient(APIstub, args)
+	} else if function == "queryPatient" {
+		return s.queryPatient(APIstub, args)
+	} else if function == "recordDoctor" {
+		return s.recordDoctor(APIstub, args)
+	} else if function == "queryDoctor" {
+		return s.queryDoctor(APIstub, args)
+	} else if function == "addDoctorToPatient" {
+		return s.addDoctorToPatient(APIstub, args)
+	} else if function == "recordEnterprise" {
+		return s.recordEnterprise(APIstub, args)
+	}
+
+	//  else if function == "recordExam" {
+	// 	return s.recordExam(APIstub, args)
+	// } else if function == "queryAllExams" {
+	// 	return s.queryAllExams(APIstub)
+	// }
+	//  else if function == "recordEnterprise" {
+	// 	return s.recordEnterprise(APIstub, args)
+	// } else if function == "queryEnterprise" {
+	// 	return s.queryEnterprise(APIstub, args)
+	// }
+
+>>>>>>> Stashed changes
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
@@ -91,10 +166,29 @@ func (s *SmartContract) queryTuna(APIstub shim.ChaincodeStubInterface, args []st
 }
 
 /*
+ * The queryEnterprise method *
+Used to view the records of one particular Enterprise
+It takes one argument -- the key for the Enterprise in question
+*/
+func (s *SmartContract) queryEnterprise(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	doctorAsBytes, _ := APIstub.GetState(args[0])
+	if doctorAsBytes == nil {
+		return shim.Error("Could not locate Doctor")
+	}
+	return shim.Success(doctorAsBytes)
+}
+
+/*
  * The initLedger method *
 Will add test data (10 tuna catches)to our network
 */
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
+<<<<<<< Updated upstream
 	tuna := []Tuna{
 		Tuna{Vessel: "923F", Location: "67.0006, -70.5476", Timestamp: "1504054225", Holder: "Miriam"},
 		Tuna{Vessel: "M83T", Location: "91.2395, -49.4594", Timestamp: "1504057825", Holder: "Dave"},
@@ -106,6 +200,17 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 		Tuna{Vessel: "EI89", Location: "-132.3207, -34.0983", Timestamp: "1485066691", Holder: "Yuan"},
 		Tuna{Vessel: "129R", Location: "153.0054, 12.6429", Timestamp: "1485153091", Holder: "Carlo"},
 		Tuna{Vessel: "49W4", Location: "51.9435, 8.2735", Timestamp: "1487745091", Holder: "Fatima"},
+=======
+
+	patients := []Patient{
+		Patient{Id: "1", CPF: "1", Name: "Pedro", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+	}
+
+	doctors := []Doctor{
+		Doctor{Id: "82029156787", CRM: "512974", CPF: "82029156787", Name: "Carla", Phone: "21999839210", Email: "carla.sousa@uol.com.br", Patients: []string{}, Exams: []string{}},
+		Doctor{Id: "82029156788", CRM: "512975", CPF: "82029156788", Name: "Claudio", Phone: "21999839210", Email: "carla.sousa@uol.com.br", Patients: []string{}, Exams: []string{}},
+>>>>>>> Stashed changes
 	}
 
 	i := 0
@@ -131,14 +236,37 @@ func (s *SmartContract) recordTuna(APIstub shim.ChaincodeStubInterface, args []s
 		return shim.Error("Incorrect number of arguments. Expecting 5")
 	}
 
+<<<<<<< Updated upstream
 	var tuna = Tuna{Vessel: args[1], Location: args[2], Timestamp: args[3], Holder: args[4]}
+=======
+	var Exam = Exam{ExamId: args[0], PatientId: args[1], DoctorId: args[2]}
+
+	ExamAsBytes, _ := json.Marshal(Exam)
+	err := APIstub.PutState(args[0], ExamAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to record Exam: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The recordPatient method *
+ */
+func (s *SmartContract) recordPatient(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 10 {
+		return shim.Error("Incorrect number of arguments. Expecting 10")
+	}
+
+	var Patient = Patient{Id: args[0], CPF: args[1], Name: args[2], Sex: args[3], Phone: args[4], Email: args[5], Height: args[6], Weight: args[7], Age: args[8], BloodType: args[9], Doctors: []string{}, Exams: []string{}, Enterprises: []string{}}
+>>>>>>> Stashed changes
 
 	tunaAsBytes, _ := json.Marshal(tuna)
 	err := APIstub.PutState(args[0], tunaAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to record tuna catch: %s", args[0]))
 	}
-
 	return shim.Success(nil)
 }
 
@@ -216,6 +344,54 @@ func (s *SmartContract) changeTunaHolder(APIstub shim.ChaincodeStubInterface, ar
 	err := APIstub.PutState(args[0], tunaAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to change tuna holder: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The addDoctorToPatient method *
+ */
+func (s *SmartContract) addEnterpriseToPatient(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	patientAsBytes, _ := APIstub.GetState(args[0])
+	if patientAsBytes == nil {
+		return shim.Error("Could not locate patient")
+	}
+	patient := Patient{}
+
+	json.Unmarshal(patientAsBytes, &patient)
+	// Normally check that the specified argument is a valid holder of tuna
+	// we are skipping this check for this example
+	patient.Enterprises = append(patient.Enterprises, args[1])
+	patientAsBytes, _ = json.Marshal(patient)
+	err := APIstub.PutState(args[0], patientAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to add enterprise to patient: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The recordEnterprise method *
+ */
+func (s *SmartContract) recordEnterprise(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 5 {
+		return shim.Error("Incorrect number of arguments in recordEnterprise. Expecting 5")
+	}
+
+	var Enterprise = Enterprise{Id: args[0], CNPJ: args[1], Name: args[2], Phone: args[3], Email: args[4], Patients: []string{}, Exams: []string{}, Doctors: []string{}}
+
+	enterpriseAsBytes, _ := json.Marshal(Enterprise)
+	err := APIstub.PutState(args[0], enterpriseAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to record enterprise: %s", args[0]))
 	}
 
 	return shim.Success(nil)
