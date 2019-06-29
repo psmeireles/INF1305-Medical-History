@@ -164,7 +164,6 @@ app.controller('appController', function($scope, appFactory){
 	}
 
 	$scope.recordDoctor = function(){
-		debugger
 		appFactory.recordDoctor($scope.doctor, function(data){
 			$scope.create_doctor = data;
 			$("#success_create").show();
@@ -172,7 +171,6 @@ app.controller('appController', function($scope, appFactory){
 	}
 
 	$scope.recordEnterprise = function(){
-		debugger
 		appFactory.recordEnterprise($scope.enterprise, function(data){
 			$scope.create_enterprise = data;
 			$("#success_create").show();
@@ -233,7 +231,7 @@ app.controller('appController', function($scope, appFactory){
 			} else{
 				$("#error_query").hide();
 			}
-			debugger
+
 			var patients = $scope.user.patients
 			$scope.user.patients = []
 			for(var i = 0; i < patients.length; i++){

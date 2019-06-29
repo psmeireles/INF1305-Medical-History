@@ -121,9 +121,11 @@
         <tr>
           <th>Name</th>
           <th>CPF</th>
+          <th>Age</th>
           <th>Sex</th>
           <th>Height</th>
           <th>Weight</th>
+          <th>Blood Type</th>
           <th>Phone <br></th>
           <th>E-mail</th>
         </tr>
@@ -131,9 +133,11 @@
         <tr ng-repeat="patient in user.patients">
           <td>{{patient.name}}</td>
           <td>{{patient.cpf}}</td>
+          <td>{{patient.age}}</td>
           <td>{{patient.sex}}</td>
           <td>{{patient.height}}</td>
           <td>{{patient.weight}}</td>
+          <td>{{patient.bloodType}}</td>
           <td>{{patient.phone}}</td>
           <td>{{patient.email}}</td>
         </tr>
