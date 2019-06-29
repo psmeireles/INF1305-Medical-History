@@ -12,7 +12,6 @@ app.controller('appController', function($scope, appFactory){
 	$("#error_holder").hide();
 	$("#error_query").hide();
 	
-	$scope.user_id = "";
 	$scope.queryAllTuna = function(){
 
 		appFactory.queryAllTuna(function(data){
@@ -45,13 +44,7 @@ app.controller('appController', function($scope, appFactory){
 		});
 	}
 
-	$scope.recordTuna = function(){
-
-		appFactory.recordTuna($scope.tuna, function(data){
-			$scope.create_tuna = data;
-			$("#success_create").show();
-		});
-	}
+	$scope.user_id = "";
 
 	$scope.changeHolder = function(){
 
@@ -63,6 +56,20 @@ app.controller('appController', function($scope, appFactory){
 			} else{
 				$("#success_holder").show();
 				$("#error_holder").hide();
+			}
+		});
+	}
+
+	$scope.goToMyProfile = function(){
+		appFactory.queryPatient($scope.user_id, function(data){
+			if (data.patients == null){
+				window.location.href = "./myUser_profile.html?id=" + $scope.user_id;
+			}
+			else if (data.doctors == null){ 
+				window.location.href = "./myDoc_profile.html?id=" + $scope.user_id;
+			}
+			else{
+				window.location.href = "./myEnterprise_profile.html?id=" + $scope.user_id;
 			}
 		});
 	}
@@ -85,8 +92,22 @@ app.controller('appController', function($scope, appFactory){
 
 	}
 
-	$scope.goToMyProfile = function(){
-		window.location.href = "./my_profile.html?id=" + $scope.user_id;
+	$scope.addEnterpriseToPatient = function(){
+		var enterprise = {}
+		enterprise.enterpriseId = $scope.enterpriseToAdd
+		enterprise.patientId = $scope.user.id
+
+		appFactory.addEnterpriseToPatient(enterprise, function(data){
+			$scope.enterprise_added = data;
+			if ($scope.enterprise_added == "Error: no patient found"){
+				$("#error_holder").show();
+				$("#success_holder").hide();
+			} else{
+				$("#success_holder").show();
+				$("#error_holder").hide();
+			}
+		});
+
 	}
 
 	$scope.queryPatient = function(){
@@ -127,10 +148,33 @@ app.controller('appController', function($scope, appFactory){
 		});
 	}
 
+	$scope.queryEnterprise = function(){
+
+		var id = $scope.enterprise_id;
+
+		appFactory.queryEnterprise(id, function(data){
+			$scope.query_enterprise = data;
+			if ($scope.query_doctor == "Could not locate enterprise"){
+				console.log()
+				$("#error_query").show();
+			} else{
+				$("#error_query").hide();
+			}
+		});
+	}
+
 	$scope.recordDoctor = function(){
 		debugger
 		appFactory.recordDoctor($scope.doctor, function(data){
 			$scope.create_doctor = data;
+			$("#success_create").show();
+		});
+	}
+
+	$scope.recordEnterprise = function(){
+		debugger
+		appFactory.recordEnterprise($scope.enterprise, function(data){
+			$scope.create_enterprise = data;
 			$("#success_create").show();
 		});
 	}
@@ -178,6 +222,62 @@ app.controller('appController', function($scope, appFactory){
 			}
 		});
 	}
+
+	$scope.getDoctorData = function(){
+		var id = window.location.href.split('=')[1]
+		appFactory.queryDoctor(id, function(data){
+			$scope.user = data;
+			if ($scope.user == "Could not locate doctor"){
+				console.log()
+				$("#error_query").show();
+			} else{
+				$("#error_query").hide();
+			}
+			debugger
+			var patients = $scope.user.patients
+			$scope.user.patients = []
+			for(var i = 0; i < patients.length; i++){
+				appFactory.queryPatient(patients[i], function(data){
+					$scope.user.patients.push(data)
+					if ($scope.user == "Could not locate patient"){
+						console.log()
+						$("#error_query").show();
+					} else{
+						$("#error_query").hide();
+					}
+				})
+			}
+		});
+	}
+
+	$scope.getEnterpriseData = function(){
+		var id = window.location.href.split('=')[1]
+		appFactory.queryEnterprise(id, function(data){
+			$scope.enterprise = data;
+			if ($scope.user == "Could not locate enterprise"){
+				console.log()
+				$("#error_query").show();
+			} else{
+				$("#error_query").hide();
+			}
+			var name = $scope.enterprise.name
+			var id = $scope.enterprise.id
+			var users = $scope.enterprise.patients
+			$scope.enterprise.patients = []
+			for(var i = 0; i < users.length; i++){
+				appFactory.queryPatient(patients[i], function(data){
+					$scope.enterprise.patients.push(data)
+					if ($scope.enterprise == "Could not locate patient"){
+						console.log()
+						$("#error_query").show();
+					} else{
+						$("#error_query").hide();
+					}
+				})
+			}
+		});
+	}
+
 });
 
 // Angular Factory
@@ -185,44 +285,19 @@ app.factory('appFactory', function($http){
 	
 	var factory = {};
 
-    factory.queryAllTuna = function(callback){
-
-    	$http.get('/get_all_tuna/').success(function(output){
-			callback(output)
-		});
-	}
-
-	factory.queryTuna = function(id, callback){
-    	$http.get('/get_tuna/'+id).success(function(output){
-			callback(output)
-		});
-	}
-
-	factory.recordTuna = function(data, callback){
-
-		data.location = data.longitude + ", "+ data.latitude;
-
-		var tuna = data.id + "-" + data.location + "-" + data.timestamp + "-" + data.holder + "-" + data.vessel;
-
-    	$http.get('/add_tuna/'+tuna).success(function(output){
-			callback(output)
-		});
-	}
-
-	factory.changeHolder = function(data, callback){
-
-		var holder = data.id + "-" + data.name;
-
-    	$http.get('/change_holder/'+holder).success(function(output){
-			callback(output)
-		});
-	}
-
 	factory.addDoctorToPatient = function(data, callback){
 
 		var doctor = data.patientId + "-" + data.doctorId;
 
     	$http.get('/add_doctor_to_patient/'+doctor).success(function(output){
+			callback(output)
+		});
+	}
+	factory.addDEnterpriseToPatient = function(data, callback){
+
+		var enterprise = data.patientId + "-" + data.enterpriseId;
+
+    	$http.get('/add_enterprise_to_patient/'+doctor).success(function(output){
 			callback(output)
 		});
 	}
@@ -258,6 +333,12 @@ app.factory('appFactory', function($http){
 		});
 	}
 
+	factory.queryEnterprise = function(id, callback){
+    	$http.get('/get_enterprise/'+id).success(function(output){
+			callback(output)
+		});
+	}
+
 	factory.recordDoctor = function(data, callback){
 
 		var doctor = data.id + "-" + data.crm + "-" + data.cpf + "-" + data.name + "-" + data.phone + "-" + data.email
@@ -267,7 +348,13 @@ app.factory('appFactory', function($http){
 		});
 	}
 
-	return factory;
+	factory.recordEnterprise = function(data, callback){
+
+		var enterprise = data.id + "-" + data.cnpj + "-" + data.name + "-" + data.phone + "-" + data.email 
+
+    	$http.get('/add_enterprise/'+enterprise).success(function(output){
+			callback(output)
+		});
+	}
+	return factory; 
 });
-
-

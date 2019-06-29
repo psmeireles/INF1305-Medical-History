@@ -99,18 +99,19 @@
 
             <input id="createSubmit" type="submit" value="Create" class="btn btn-primary" ng-click="recordDoctor()"> 
         </div>
-
         <div class="form-group">
-            <label>Register new enterprise</label>
-            <h5 style="color:green;margin-bottom:2%" id="success_create">Success! Tx ID: {{create_tuna}}</h5>
-            <br>
-            Name: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.name">
-            E-mail: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.email">
-            Phone number: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.phone">
-            CNPJ: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.cnpj">
-
-            <input id="createSubmit" type="submit" value="Create" class="btn btn-primary" ng-click="recordEnterprise()"> 
-        </div>
+          <label>Register new Hospital or Clinic</label>
+          <h5 style="color:green;margin-bottom:2%" id="success_create">Success! Tx ID: {{create_enterprise}}</h5>
+          <br>
+          Id: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.id">
+          CNPJ: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.cnpj">
+          Name: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.name">
+          Phone number: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.phone">
+          Email: <input class="form-control" type="text" placeholder="Ex: 11" ng-model="enterprise.email">
+          
+          <input id="createSubmit" type="submit" value="Create" class="btn btn-primary" ng-click="recordEnterprise()"> 
+      </div>
+        
     </div>
   </body>
     <!-- requiring the angular page -->

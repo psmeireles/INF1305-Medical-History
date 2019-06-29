@@ -28,4 +28,15 @@ module.exports = function(app){
   app.get('/remove_doctor_from_patient/:doctor', function(req, res){
     exames.remove_doctor_from_patient(req, res);
   });
+  app.get('/get_enterprise/:id', function(req, res){
+    exames.get_enterprise(req, res);
+  });
+  app.get('/add_enterprise/:enterprise', function(req, res){
+    exames.add_enterprise(req, res);
+  });
+  app.get('/add_enterprise_to_patient/:enterprise', function(req, res){ 
+    exames.add_enterprise_to_patient(req, res); 
+  });
+
+
 }
