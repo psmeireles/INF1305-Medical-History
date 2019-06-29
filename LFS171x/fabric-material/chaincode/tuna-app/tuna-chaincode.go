@@ -30,18 +30,19 @@ type SmartContract struct {
  */
 
 type Patient struct {
-	Id        string   `json:"id"`
-	CPF       string   `json:"cpf"`
-	Name      string   `json:"name"`
-	Sex       string   `json:"sex"`
-	Phone     string   `json:"phone"`
-	Email     string   `json:"email"`
-	Height    string   `json:"height"`
-	Weight    string   `json:"weight"`
-	Age       string   `json:"age"`
-	BloodType string   `json:"bloodType"`
-	Doctors   []string `json:"doctors"`
-	Exams     []string `json:"exams"`
+	Id          string   `json:"id"`
+	CPF         string   `json:"cpf"`
+	Name        string   `json:"name"`
+	Sex         string   `json:"sex"`
+	Phone       string   `json:"phone"`
+	Email       string   `json:"email"`
+	Height      string   `json:"height"`
+	Weight      string   `json:"weight"`
+	Age         string   `json:"age"`
+	BloodType   string   `json:"bloodType"`
+	Doctors     []string `json:"doctors"`
+	Exams       []string `json:"exams"`
+	Enterprises []string `json:"enterprises"`
 }
 
 type Doctor struct {
@@ -106,18 +107,11 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.queryDoctor(APIstub, args)
 	} else if function == "addDoctorToPatient" {
 		return s.addDoctorToPatient(APIstub, args)
+	} else if function == "recordEnterprise" {
+		return s.recordEnterprise(APIstub, args)
+	} else if function == "addEnterpriseToPatient" {
+		return s.addEnterpriseToPatient(APIstub, args)
 	}
-	//  else if function == "recordExam" {
-	// 	return s.recordExam(APIstub, args)
-	// } else if function == "queryAllExams" {
-	// 	return s.queryAllExams(APIstub)
-	// }
-	//  else if function == "recordEnterprise" {
-	// 	return s.recordEnterprise(APIstub, args)
-	// } else if function == "queryEnterprise" {
-	// 	return s.queryEnterprise(APIstub, args)
-	// }
-
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
@@ -194,8 +188,8 @@ func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Respo
 	// }
 
 	patients := []Patient{
-		Patient{Id: "1", CPF: "1", Name: "Pedro", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}},
-		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}},
+		Patient{Id: "1", CPF: "1", Name: "Pedro", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
 	}
 
 	doctors := []Doctor{
@@ -367,6 +361,54 @@ func (s *SmartContract) addDoctorToPatient(APIstub shim.ChaincodeStubInterface, 
 	err := APIstub.PutState(args[0], patientAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to add doctor to patient: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The addDoctorToPatient method *
+ */
+func (s *SmartContract) addEnterpriseToPatient(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	patientAsBytes, _ := APIstub.GetState(args[0])
+	if patientAsBytes == nil {
+		return shim.Error("Could not locate patient")
+	}
+	patient := Patient{}
+
+	json.Unmarshal(patientAsBytes, &patient)
+	// Normally check that the specified argument is a valid holder of tuna
+	// we are skipping this check for this example
+	patient.Enterprises = append(patient.Enterprises, args[1])
+	patientAsBytes, _ = json.Marshal(patient)
+	err := APIstub.PutState(args[0], patientAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to add enterprise to patient: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The recordEnterprise method *
+ */
+func (s *SmartContract) recordEnterprise(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 5 {
+		return shim.Error("Incorrect number of arguments in recordEnterprise. Expecting 5")
+	}
+
+	var Enterprise = Enterprise{Id: args[0], CNPJ: args[1], Name: args[2], Phone: args[3], Email: args[4], Patients: []string{}, Exams: []string{}, Doctors: []string{}}
+
+	enterpriseAsBytes, _ := json.Marshal(Enterprise)
+	err := APIstub.PutState(args[0], enterpriseAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to record enterprise: %s", args[0]))
 	}
 
 	return shim.Success(nil)

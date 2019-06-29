@@ -98,7 +98,7 @@
       }
     </style>
   </head>
-  <body ng-app="application" ng-controller="appController" ng-init="getUserData()">
+  <body ng-app="application" ng-controller="appController" ng-init="getEnterpriseData()">
     <header>
       <div id="left_header">Hyperledger Fabric Tuna Application</div>
       <i id="right_header">Example Blockchain Application for Introduction to Hyperledger Fabric LFS171x</i>
@@ -106,62 +106,36 @@
 
     <div id="body">
         
-      <h2 style="text-align:center">User Profile Card</h2>
+      <h2 style="text-align:center">Hospital or Clinic Profile</h2>
       
       <div class="card">
-        <img src="http://chittagongit.com/images/google-user-icon/google-user-icon-7.jpg" alt="John" style="width:100%">
-        <h1>{{user.name}}</h1>
-        <p>Sex: {{user.sex}}</p>
-        <p>Height: {{user.height}} cm</p>
-        <p>Weight: {{user.weight}} kg</p>
-        <p>Blood type: {{user.bloodType}}</p>
-        <p><button>{{user.email}}<br>{{user.phone}}</button></p>
+        <img src="http://chittagongit.com/images/google-user-icon/google-user-icon-7.jpg" alt="Hosp1" style="width:100%">
+        <h1>{{enterprise.name}}</h1>
+        <p>Cnpj: {{enterprise.cnpj}}</p>
       </div>
 
-      <label>Who has access to your profile</label><br>
-      Doctors:
+      <label>Active Users</label><br>
+      Users:
 
-      <input id="querySubmit" type="submit" value="Add Doctor" class="btn btn-primary" ng-click="addDoctorToPatient()"> <input id="createName" class="form-control" type="text" placeholder="Insert Doctor CPF" ng-model="doctorToAdd">
-
-      <table id="user_doctors" class="table" align="center">
+      <table id="active_users" class="table" text-align="center">
         <tr>
           <th>Name</th>
           <th>CPF</th>
-          <th>CRM</th>
+          <th>ID</th>
           <th>Phone <br></th>
           <th>E-mail</th>
-          <th>Revoke access?</th>
+          <th>Add exam?</th>
         </tr>
 
-        <tr ng-repeat="doctor in user.doctors">
-          <td>{{doctor.name}}</td>
-          <td>{{doctor.cpf}}</td>
-          <td>{{doctor.crm}}</td>
-          <td>{{doctor.phone}}</td>
-          <td>{{doctor.email}}</td>
-          <td><input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="revokeAccess(doctor)"></td>
+        <tr ng-repeat="patient in enterprise.patients">
+          <td>{{patient.name}}</td>
+          <td>{{patient.id}}</td>
+          <td>{{patient.cpf}}</td>
+          <td>{{patient.phone}}</td>
+          <td>{{patient.email}}</td>
+          <td><input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="addExam(user)"></td>
         </tr>
-      </table>
-
-      Enterprises:
-      
-      <table id="user_enterprises" class="table" align="center">
-        <tr>
-          <th>Name</th>
-          <th>CNPJ</th>
-          <th>Phone <br></th>
-          <th>E-mail</th>
-          <th>Revoke access?</th>
-        </tr>
-
-        <tr ng-repeat="enterprise in user.enterprises">
-          <td>{{enterprise.name}}</td>
-          <td>{{enterprise.cnpj}}</td>
-          <td>{{enterprise.phone}}</td>
-          <td>{{enterprise.email}}</td>
-          <td><input id="querySubmit" type="submit" value="Query" class="btn btn-primary" ng-click="revokeAccess(enterprise)"></td>
-        </tr>
-      </table>
+    </table>
 
     </div>
   </body>

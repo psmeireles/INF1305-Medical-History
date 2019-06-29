@@ -25,4 +25,15 @@ module.exports = function(app){
   app.get('/add_doctor_to_patient/:doctor', function(req, res){
     exames.add_doctor_to_patient(req, res);
   });
+  app.get('/get_enterprise/:id', function(req, res){
+    exames.get_enterprise(req, res);
+  });
+  app.get('/add_enterprise/:enterprise', function(req, res){
+    exames.add_enterprise(req, res);
+  });
+  app.get('/add_enterprise_to_patient/:enterprise', function(req, res){ 
+    exames.add_enterprise_to_patient(req, res); 
+  });
+
+
 }
