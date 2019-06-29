@@ -61,30 +61,21 @@ app.controller('appController', function($scope, appFactory){
 	}
 
 	$scope.goToMyProfile = function(){
-
-		appFactory.queryPatient(id, function(data){
-			$scope.goToMyProfile = data;
-			if ($scope.goToMyProfile == "Could not locate patient")
-			{
-				appFactory.queryDoctor(id, function(data){
-					$scope.goToMyProfile = data;
-					if ($scope.goToMyProfile == "Could not locate doctor"){
-						type = "Enterprise"
-					} else{
-						type = "Doc"
-					}
-				});
+		appFactory.queryPatient($scope.user_id, function(data){
+			if (data.patients == null){
+				window.location.href = "./myUser_profile.html?id=" + $scope.user_id;
 			}
-			else{ 
-				type = "User"
+			else if (data.doctors == null){ 
+				window.location.href = "./myDoc_profile.html?id=" + $scope.user_id;
+			}
+			else{
+				window.location.href = "./myEnterprise_profile.html?id=" + $scope.user_id;
 			}
 		});
-		window.location.href = "./my" + type + "_profile.html?id=" + $scope.user_id;
 	}
 
 	$scope.addDoctorToPatient = function(){
 
-		debugger
 		var doctor = {}
 		doctor.doctorId = $scope.doctorToAdd
 		doctor.patientId = $scope.user.id
@@ -101,9 +92,9 @@ app.controller('appController', function($scope, appFactory){
 		});
 
 	}
+
 	$scope.addEnterpriseToPatient = function(){
-		debugger
-		var doctor = {}
+		var enterprise = {}
 		enterprise.enterpriseId = $scope.enterpriseToAdd
 		enterprise.patientId = $scope.user.id
 
@@ -206,6 +197,33 @@ app.controller('appController', function($scope, appFactory){
 				appFactory.queryDoctor(doctors[i], function(data){
 					$scope.user.doctors.push(data)
 					if ($scope.user == "Could not locate doctor"){
+						console.log()
+						$("#error_query").show();
+					} else{
+						$("#error_query").hide();
+					}
+				})
+			}
+		});
+	}
+
+	$scope.getDoctorData = function(){
+		var id = window.location.href.split('=')[1]
+		appFactory.queryDoctor(id, function(data){
+			$scope.user = data;
+			if ($scope.user == "Could not locate doctor"){
+				console.log()
+				$("#error_query").show();
+			} else{
+				$("#error_query").hide();
+			}
+			debugger
+			var patients = $scope.user.patients
+			$scope.user.patients = []
+			for(var i = 0; i < patients.length; i++){
+				appFactory.queryPatient(patients[i], function(data){
+					$scope.user.patients.push(data)
+					if ($scope.user == "Could not locate patient"){
 						console.log()
 						$("#error_query").show();
 					} else{
