@@ -179,27 +179,18 @@ func (s *SmartContract) queryDoctor(APIstub shim.ChaincodeStubInterface, args []
 Will add test data (10 Exame catches)to our network
 */
 func (s *SmartContract) initLedger(APIstub shim.ChaincodeStubInterface) sc.Response {
-	// exams := []Exam{
-	// 	Exam{Paciente: "923F", Cpf: "67000676", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "M83T", Cpf: "91.39594", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "T012", Cpf: "58.04891", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "P490", Cpf: "-45.0949", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "S439", Cpf: "-107.603", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "J205", Cpf: "-155.223", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "S22L", Cpf: "103.8877", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "EI89", Cpf: "-1326983", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "129R", Cpf: "153.0529", Medico: "Carlos", Crm: "541"},
-	// 	Exam{Paciente: "49W4", Cpf: "51.95435", Medico: "Carlos", Crm: "541"},
-	// }
 
 	patients := []Patient{
-		Patient{Id: "1", CPF: "1", Name: "Pedro", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
-		Patient{Id: "2", CPF: "2", Name: "José", Sex: "M", Phone: "123", Email: "a@a.a", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+		Patient{Id: "1", CPF: "84532652098", Name: "Pedro Sousa Meireles", Sex: "M", Phone: "21933000494", Email: "psmeireles25@gmail.com", Height: "175", Weight: "61", Age: "22", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+		Patient{Id: "2", CPF: "29847293956", Name: "José da Silva", Sex: "M", Phone: "2112345678", Email: "josesilva@gmail.com", Height: "185", Weight: "91", Age: "65", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+		Patient{Id: "3", CPF: "23485292659", Name: "Rafael Cabral", Sex: "M", Phone: "2294874938", Email: "rafarubim@gmail.com", Height: "175", Weight: "71", Age: "21", BloodType: "A+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+		Patient{Id: "4", CPF: "98436939758", Name: "Luiza Lima", Sex: "F", Phone: "11938427583", Email: "lulima@gmail.com", Height: "160", Weight: "51", Age: "36", BloodType: "AB+", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
+		Patient{Id: "5", CPF: "64934875378", Name: "Antônia Meira", Sex: "F", Phone: "21929384938", Email: "tonya@gmail.com", Height: "165", Weight: "70", Age: "52", BloodType: "O-", Doctors: []string{}, Exams: []string{}, Enterprises: []string{}},
 	}
 
 	doctors := []Doctor{
-		Doctor{Id: "82029156787", CRM: "512974", CPF: "82029156787", Name: "Carla", Phone: "21999839210", Email: "carla.sousa@uol.com.br", Patients: []string{}, Exams: []string{}},
-		Doctor{Id: "82029156788", CRM: "512975", CPF: "82029156788", Name: "Claudio", Phone: "21999839210", Email: "carla.sousa@uol.com.br", Patients: []string{}, Exams: []string{}},
+		Doctor{Id: "82029156787", CRM: "512974", CPF: "82029156787", Name: "Carla Eliane Carvalho de Sousa", Phone: "21999839210", Email: "carla.sousa@uol.com.br", Patients: []string{}, Exams: []string{}},
+		Doctor{Id: "82029156788", CRM: "640816", CPF: "82029156788", Name: "Claudio Luiz Bastos Bragança", Phone: "21999839210", Email: "claudio.braganca@uol.com.br", Patients: []string{}, Exams: []string{}},
 	}
 
 	i := 0
