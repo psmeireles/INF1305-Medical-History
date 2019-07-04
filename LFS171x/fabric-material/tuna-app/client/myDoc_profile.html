@@ -128,6 +128,7 @@
           <th>Blood Type</th>
           <th>Phone <br></th>
           <th>E-mail</th>
+          <th>Add exam</th>
         </tr>
 
         <tr ng-repeat="patient in user.patients">
@@ -140,13 +141,18 @@
           <td>{{patient.bloodType}}</td>
           <td>{{patient.phone}}</td>
           <td>{{patient.email}}</td>
+          <td>
+            <form action="/upload" enctype="multipart/form-data" method="POST"> 
+              <input type="file" name="file" />
+              <div ng-hide="true">
+                <input name="patientId" value="{{patient.id}}" />
+                <input name="doctorId" value="{{user.id}}" />
+              </div>
+              <input type="submit" value="Upload file"/>
+            </form>
+          </td>
         </tr>
       </table>
-
-      <form action="/upload" enctype="multipart/form-data" method="POST"> 
-          <input type="file" name="file" />
-          <input type="submit" value="Upload file"/>
-      </form>
 
     </div>
   </body>

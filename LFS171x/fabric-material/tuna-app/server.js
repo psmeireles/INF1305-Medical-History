@@ -13,6 +13,8 @@ var path          = require('path');
 var util          = require('util');
 var os            = require('os');
 var multer        = require('multer');
+var fs            = require('fs');
+var controller    = require('./controller')
 
 const multerConfig = {
 
@@ -26,7 +28,6 @@ const multerConfig = {
 
     //specify the filename to be unique
     filename: function(req, file, next){
-      console.log(file);
       //get the file mimetype ie 'image/jpeg' split and prefer the second value ie'jpeg'
       const ext = file.mimetype.split('/')[1];
       //set the file fieldname to a unique name containing the original name, current datetime and the extension.
@@ -50,7 +51,8 @@ require('./routes.js')(app);
 // set up a static file server that points to the "client" directory
 app.use(express.static(path.join(__dirname, './client')));
 app.post('/upload', multer(multerConfig).any(), function(req, res){
-  res.send('Duvido que funcione')
+  controller.add_exam(req, res);
+  res.send(`File ${req.files[0].originalname} uploaded to patient ${req.body.patientId} by doctor ${req.body.doctorId}`)
 })
 
 // Save our port

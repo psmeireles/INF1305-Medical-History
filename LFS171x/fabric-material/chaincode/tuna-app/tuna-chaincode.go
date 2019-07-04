@@ -113,7 +113,10 @@ func (s *SmartContract) Invoke(APIstub shim.ChaincodeStubInterface) sc.Response 
 		return s.recordEnterprise(APIstub, args)
 	} else if function == "addEnterpriseToPatient" {
 		return s.addEnterpriseToPatient(APIstub, args)
+	} else if function == "addExam" {
+		return s.addExam(APIstub, args)
 	}
+
 	return shim.Error("Invalid Smart Contract function name.")
 }
 
@@ -486,6 +489,51 @@ func (s *SmartContract) recordEnterprise(APIstub shim.ChaincodeStubInterface, ar
 	err := APIstub.PutState(args[0], enterpriseAsBytes)
 	if err != nil {
 		return shim.Error(fmt.Sprintf("Failed to record enterprise: %s", args[0]))
+	}
+
+	return shim.Success(nil)
+}
+
+/*
+ * The addExam method *
+ */
+func (s *SmartContract) addExam(APIstub shim.ChaincodeStubInterface, args []string) sc.Response {
+
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
+	}
+
+	patientAsBytes, _ := APIstub.GetState(args[0])
+	if patientAsBytes == nil {
+		return shim.Error("Could not locate patient")
+	}
+	patient := Patient{}
+
+	json.Unmarshal(patientAsBytes, &patient)
+
+	doctorAsBytes, _ := APIstub.GetState(args[1])
+	if doctorAsBytes == nil {
+		return shim.Error("Could not locate doctor")
+	}
+	doctor := Doctor{}
+
+	json.Unmarshal(doctorAsBytes, &doctor)
+
+	// Normally check that the specified argument is a valid holder of tuna
+	// we are skipping this check for this example
+	patient.Exams = append(patient.Exams, args[2])
+	doctor.Exams = append(doctor.Exams, args[2])
+
+	patientAsBytes, _ = json.Marshal(patient)
+	err := APIstub.PutState(args[0], patientAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to add exam to patient: %s", args[0]))
+	}
+
+	doctorAsBytes, _ = json.Marshal(doctor)
+	err = APIstub.PutState(args[1], doctorAsBytes)
+	if err != nil {
+		return shim.Error(fmt.Sprintf("Failed to add exam to doctor: %s", args[1]))
 	}
 
 	return shim.Success(nil)
