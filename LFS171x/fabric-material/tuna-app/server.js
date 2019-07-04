@@ -23,7 +23,7 @@ const multerConfig = {
 
     //specify destination
     destination: function(req, file, next){
-      next(null, './uploads');
+      next(null, './client/uploads');
     },
 
     //specify the filename to be unique

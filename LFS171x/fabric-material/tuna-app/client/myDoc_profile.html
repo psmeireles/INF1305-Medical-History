@@ -154,6 +154,12 @@
         </tr>
       </table>
 
+      <br/>
+      <label>Exams</label><br>
+      <div ng-repeat="exam in user.exams">
+        <a href="uploads/{{exam}}">{{exam}}</a>
+      </div>
+
     </div>
   </body>
     <!-- requiring the angular page -->
