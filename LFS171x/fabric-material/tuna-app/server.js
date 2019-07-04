@@ -12,7 +12,28 @@ var Fabric_Client = require('fabric-client');
 var path          = require('path');
 var util          = require('util');
 var os            = require('os');
+var multer        = require('multer');
 
+const multerConfig = {
+
+  //specify diskStorage (another option is memory)
+  storage: multer.diskStorage({
+
+    //specify destination
+    destination: function(req, file, next){
+      next(null, './uploads');
+    },
+
+    //specify the filename to be unique
+    filename: function(req, file, next){
+      console.log(file);
+      //get the file mimetype ie 'image/jpeg' split and prefer the second value ie'jpeg'
+      const ext = file.mimetype.split('/')[1];
+      //set the file fieldname to a unique name containing the original name, current datetime and the extension.
+      next(null, file.fieldname + '-' + Date.now() + '.'+ext);
+    }
+  })
+};
 // Load all of our middleware
 // configure app to use bodyParser()
 // this will let us get the data from a POST
@@ -28,6 +49,9 @@ require('./routes.js')(app);
 
 // set up a static file server that points to the "client" directory
 app.use(express.static(path.join(__dirname, './client')));
+app.post('/upload', multer(multerConfig).any(), function(req, res){
+  res.send('Duvido que funcione')
+})
 
 // Save our port
 var port = process.env.PORT || 8000;
