@@ -363,6 +363,7 @@ func (s *SmartContract) addDoctorToPatient(APIstub shim.ChaincodeStubInterface, 
 	// we are skipping this check for this example
 	patient.Doctors = append(patient.Doctors, args[1])
 	doctor.Patients = append(doctor.Patients, args[0])
+	doctor.Exams = append(doctor.Exams, patient.Exams...)
 
 	patientAsBytes, _ = json.Marshal(patient)
 	err := APIstub.PutState(args[0], patientAsBytes)
@@ -421,6 +422,22 @@ func (s *SmartContract) removeDoctorFromPatient(APIstub shim.ChaincodeStubInterf
 		}
 	}
 	doctor.Patients = patients
+
+	exams := []string{}
+	for i := 0; i < len(doctor.Exams); i++ {
+		add := true
+		for j := 0; j < len(patient.Exams); j++ {
+			if doctor.Exams[i] == patient.Exams[j] {
+				add = false
+			}
+		}
+
+		if add == true {
+			exams = append(exams, doctor.Exams[i])
+		}
+	}
+
+	doctor.Exams = exams
 
 	patientAsBytes, _ = json.Marshal(patient)
 	err := APIstub.PutState(args[0], patientAsBytes)
